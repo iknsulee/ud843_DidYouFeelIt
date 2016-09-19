@@ -20,8 +20,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import java.net.URL;
-
 /**
  * Displays the perceived strength of a single earthquake event based on responses from people who
  * felt the earthquake.
@@ -39,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new FetchTask().execute();
+        AsyncTask<String, Void, Event> earthquakeAsyncTask = new EarthquakeAsyncTask();
+        earthquakeAsyncTask.execute(USGS_REQUEST_URL);
     }
 
     /**
@@ -56,12 +55,12 @@ public class MainActivity extends AppCompatActivity {
         magnitudeTextView.setText(earthquake.perceivedStrength);
     }
 
-    private class FetchTask extends AsyncTask<URL, Void, Event> {
+    private class EarthquakeAsyncTask extends AsyncTask<String, Void, Event> {
 
         @Override
-        protected Event doInBackground(URL... params) {
+        protected Event doInBackground(String... urls) {
             // Perform the HTTP request for earthquake data and process the response.
-            Event earthquake = Utils.fetchEarthquakeData(USGS_REQUEST_URL);
+            Event earthquake = Utils.fetchEarthquakeData(urls[0]);
 
             return earthquake;
         }
